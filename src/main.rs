@@ -6,6 +6,12 @@ mod repository;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+
+    let c = CustomSmartPointer {
+        data: String::from("my stuff"),
+    };
+
+    println!("CustomSmartPointers created.");
     // Initialize Kafka producer (you might want to do this once globally)
     let kafka_producer = kafka_producer::KafkaProducer::new("localhost:9092".to_string(), "orders".to_string());
 
@@ -17,4 +23,14 @@ async fn main() -> std::io::Result<()> {
     .bind("127.0.0.1:8080")?
     .run()
     .await
+}
+
+struct CustomSmartPointer {
+    data: String,
+}
+
+impl Drop for CustomSmartPointer {
+    fn drop(&mut self) {
+        println!("Dropping CustomSmartPointer with data {}", self.data);
+    }
 }
